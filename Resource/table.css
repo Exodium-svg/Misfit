@@ -1,0 +1,71 @@
+@import "app.css";
+
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--background-secondary);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 800px;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+}
+
+th {
+    background-color: var(--background-secondary);
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--background-secondary-hover);
+}
+
+th:first-child {
+    border-top-left-radius: var(--border-radius);
+}
+
+th:last-child {
+    border-top-right-radius: var(--border-radius);
+}
+
+tbody tr {
+    transition: background-color var(--transition-speed) ease;
+    border-bottom: 1px solid var(--background-secondary);
+    min-height: 58px;
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: var(--background-secondary-hover);
+}
+
+td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--background-secondary);
+    height:58px;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgba(32, 31, 50, 0.4);
+}
+
+tbody tr:hover td {
+    border-bottom-color: var(--background-secondary-hover);
+}

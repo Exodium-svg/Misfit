@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Config Editor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1e1b2f;
+            color: #e0e0f0;
+        }
+
+        nav {
+            background-color: #2b2545;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #e0e0f0;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        nav button:hover {
+            background-color: #3a3160;
+        }
+
+        .section {
+            display: none;
+            padding: 2rem;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .table-wrapper {
+            position: relative;
+            margin-bottom: 4rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            border: 1px solid #444;
+            padding: 0.5rem;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #322b50;
+        }
+
+        td:nth-child(1), th:nth-child(1) { width: 120px; }
+        td:nth-child(2), th:nth-child(2) { width: 30%; min-width: 150px; }
+        td:nth-child(3), th:nth-child(3) { width: 60%; min-width: 200px; }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.3rem;
+            border-radius: 4px;
+            border: none;
+            background-color: #2c2644;
+            color: #e0e0f0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        button.add-btn {
+            position: absolute;
+            bottom: -2.5rem;
+            left: 0;
+            padding: 0.5rem 1rem;
+            background-color: #563b91;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button.add-btn:hover {
+            background-color: #6f4ccf;
+        }
+
+        tr.fade-in {
+            animation: fadeInRow 0.4s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <button onclick="showSection('env')">Env</button>
+    <button onclick="showSection('strings')">Strings</button>
+    <button onclick="showSection('roles')">Roles</button>
+</nav>
+
+<div id="env" class="section">
+    <h1>Env Configuration</h1>
+    <div class="table-wrapper">
+        <div id="env-table-container"></div>
+        <button class="add-btn" onclick="addRow('env')">Add Row</button>
+        <button class="add-btn" style="left: 130px;" onclick="saveEnv()">Save</button>
+    </div>
+</div>
+
+<div id="strings" class="section">
+    <h1>String Configuration</h1>
+    <div class="table-wrapper">
+        <div id="strings-table-container"></div>
+        <button class="add-btn" onclick="addRow('strings')">Add Row</button>
+        <button class="add-btn" style="left: 130px;" onclick="saveStrings()">Save</button>
+    </div>
+</div>
+
+<div id="roles" class="section">
+    <h1>Role Configuration</h1>
+    <div class="table-wrapper">
+        <div id="roles-table-container"></div>
+        <button class="add-btn" onclick="addRow('roles')">Add Row</button>
+        <button class="add-btn" style="left: 130px;" onclick="saveRoles()">Save</button>
+    </div>
+</div>
+
+<script>
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(id).classList.add('active');
+    }
+
+    function createTable(id) {
+        const container = document.getElementById(`${id}-table-container`);
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.innerHTML = '';
+        container.appendChild(table);
+
+        const row = document.createElement('tr');
+        if (id === 'env') {
+            row.innerHTML = `
+        <th>Type</th>
+        <th>Key</th>
+        <th>Value</th>
+      `;
+        } else if (id === 'strings') {
+            row.innerHTML = `
+        <th>Key</th>
+        <th>Value</th>
+      `;
+        } else if (id === 'roles') {
+            row.innerHTML = `
+        <th>Required Level</th>
+        <th>Role ID</th>
+      `;
+        }
+        thead.appendChild(row);
+    }
+
+    function addRowEnv(key = '', value = '', type = 'string') {
+        const tbody = document.querySelector(`#env-table-container table tbody`);
+        const row = document.createElement('tr');
+        row.classList.add('fade-in');
+        row.innerHTML = `
+      <td>
+        <select>
+          <option value="string" ${type === 'string' ? 'selected' : ''}>String</option>
+          <option value="int" ${type === 'int' ? 'selected' : ''}>Int</option>
+          <option value="bool" ${type === 'bool' ? 'selected' : ''}>Bool</option>
+        </select>
+      </td>
+      <td><input type="text" placeholder="Key" value="${key}"/></td>
+      <td><input type="text" placeholder="Value" value="${value}"/></td>
+    `;
+        tbody.appendChild(row);
+    }
+
+    function addRowString(key = '', value = '') {
+        const tbody = document.querySelector(`#strings-table-container table tbody`);
+        const row = document.createElement('tr');
+        row.classList.add('fade-in');
+        row.innerHTML = `
+      <td style="width:10%"><input type="text" placeholder="Key" value="${key}"/></td>
+      <td><input type="text" placeholder="Value" value="${value}"/></td>
+    `;
+        tbody.appendChild(row);
+    }
+
+    function addRowRole(requiredLevel = '', roleId = '') {
+        const tbody = document.querySelector(`#roles-table-container table tbody`);
+        const row = document.createElement('tr');
+        row.classList.add('fade-in');
+        row.innerHTML = `
+      <td style="width:10%"><input type="number" placeholder="Level" value="${requiredLevel}"/></td>
+      <td><input type="text" placeholder="Role ID" value="${roleId}"/></td>
+    `;
+        tbody.appendChild(row);
+    }
+
+    function addRow(type) {
+        if (type === 'env') addRowEnv();
+        else if (type === 'strings') addRowString();
+        else if (type === 'roles') addRowRole();
+    }
+
+    async function setRows() {
+        let response = await fetch("./env");
+        let envInfo = await response.json();
+        for (let entry of envInfo) {
+            addRowEnv(entry.key, entry.value, entry.type);
+        }
+
+        response = await fetch("./strings");
+        let stringInfo = Object.entries(await response.json()).map(([key, value]) => ({ key, value }));
+        for (let stringkvp of stringInfo) {
+            addRowString(stringkvp.key, stringkvp.value.value);
+        }
+
+        response = await fetch("./roles");
+        let roleInfo = await response.json();
+
+        console.log(roleInfo)
+        for (let role of roleInfo) {
+            addRowRole(role.required_level, role.role_id);
+        }
+    }
+
+    async function saveEnv() {
+        const rows = document.querySelectorAll('#env-table-container table tbody tr');
+        const data = [];
+        for (const row of rows) {
+            const type = row.children[0].querySelector('select').value;
+            const key = row.children[1].querySelector('input').value.trim();
+            const value = row.children[2].querySelector('input').value;
+            if (key) data.push({ type, key, value });
+        }
+
+        try {
+            const response = await fetch('/save-env', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) throw new Error('Failed to save env');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    async function saveStrings() {
+        const rows = document.querySelectorAll('#strings-table-container table tbody tr');
+        const entries = [];
+        for (const row of rows) {
+            const key = row.children[0].querySelector('input').value.trim();
+            const value = row.children[1].querySelector('input').value;
+            if (key) entries.push({ key, value });
+        }
+
+        try {
+            const response = await fetch('/save-strings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entries),
+            });
+            if (!response.ok) throw new Error('Failed to save strings');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    async function saveRoles() {
+        const rows = document.querySelectorAll('#roles-table-container table tbody tr');
+        const entries = [];
+        for (const row of rows) {
+            const requiredLevel = parseInt(row.children[0].querySelector('input').value);
+            const roleId = row.children[1].querySelector('input').value.trim();
+            if (!isNaN(requiredLevel) && roleId) {
+                entries.push({ requiredLevel, roleId });
+            }
+        }
+
+        try {
+            const response = await fetch('/save-roles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entries),
+            });
+            if (!response.ok) throw new Error('Failed to save roles');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    window.onload = function () {
+        createTable('env');
+        createTable('strings');
+        createTable('roles');
+        setRows();
+        showSection('env');
+    };
+</script>
+</body>
+</html>

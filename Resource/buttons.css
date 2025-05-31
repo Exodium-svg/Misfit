@@ -1,0 +1,99 @@
+/* Base Button Styles */
+.btn {
+    --btn-padding: 0.8rem 1.5rem;
+    --btn-radius: var(--border-radius);
+    --btn-transition: all 0.3s ease;
+
+    font-family: 'CQ Mono', monospace;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--btn-radius);
+    padding: var(--btn-padding);
+    cursor: pointer;
+    transition: var(--btn-transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    position: relative;
+    overflow: hidden;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button (Save) */
+#save-env-button {
+    padding: 0.9rem 2rem;
+}
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), #6d4ad0);
+    color: white;
+}
+
+/* Secondary Button (Add) */
+.btn-secondary {
+    background: var(--background-secondary);
+    color: var(--text);
+    border: 1px solid var(--background-secondary-hover);
+}
+
+/* Hover Effects */
+.btn-primary:hover {
+    background: linear-gradient(135deg, #6d4ad0, var(--primary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(127, 90, 240, 0.25);
+}
+
+.btn-secondary:hover {
+    background: var(--background-secondary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(32, 31, 50, 0.2);
+}
+
+/* Active/Pressed Effects */
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Focus Effects */
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(127, 90, 240, 0.4);
+}
+
+/* Button Icons */
+.btn-primary::before {
+    content: "✓";
+    font-size: 1.1rem;
+}
+
+.btn-secondary::before {
+    content: "+";
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Button Animation Effects */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg) translate(-5px, -50px) scale(0);
+    transition: all 0.6s ease;
+}
+
+.btn:hover::after {
+    transform: rotate(30deg) translate(0, 0) scale(1);
+}
+
+/* Button Container */
+.button-group {
+    display: flex;
+    gap: 1.2rem;
+    margin: 1.5rem 0;
+}
